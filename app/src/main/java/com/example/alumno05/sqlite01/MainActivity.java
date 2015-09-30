@@ -18,10 +18,10 @@ import Coneccion.sqlite;
 
 public class MainActivity extends ActionBarActivity {
     sqlite cx;
-    EditText edit1,edit2,edit3;
+    EditText edit1,edit2;
     ListView lista;
-    ListView ListUser1;
-int cont=0;
+    String[] data;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,22 +32,13 @@ int cont=0;
 
         lista=(ListView) findViewById(R.id.listView);
         listar();
-        lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+       /* lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
-                final String item = (String) parent.getItemAtPosition(position);
-                if (cont == 0) {
-                    Intent opc1 = new Intent(MainActivity.this, MainActivity.class);
-                    opc1.putExtra("item", item);
-                    startActivity(opc1);
-                    cont = 0;
-                } else if (cont == 1) {
-                    DeleteUsuario(Integer.parseInt(item));
-                    cont = 0;
-                }
-                cont++;
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                        Toast.makeText(getApplicationContext(),"Se elimino", Toast.LENGTH_SHORT).show();
             }
-        });
+        } );*/
     }
 
     @Override
@@ -59,10 +50,6 @@ int cont=0;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-            cx.getWritableDatabase().execSQL("UPDATE FROM usuario WHERE campo1 ='"+item+"'");
-            Toast.makeText(getApplicationContext(), "Eliminado", Toast.LENGTH_LONG).show();
-
 
 
         // Handle action bar item clicks here. The action bar will
@@ -83,14 +70,13 @@ int cont=0;
             Toast.makeText(getApplicationContext(), "Insertado", Toast.LENGTH_LONG).show();
             listar();
             limpiar();
-
         }
     }
     public void listar(){
 
         Cursor cursor=cx.getReadableDatabase().rawQuery("SELECT campo1 FROM usuario",null);
 
-        String[] data=new String[cursor.getCount()];
+         data=new String[cursor.getCount()];
 
    int n=0;
         if(cursor.moveToFirst()){
@@ -101,7 +87,13 @@ int cont=0;
 
         }
         lista.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, data));
-
+        lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                cx.getWritableDatabase().execSQL("DELETE FROM usuario where campo1='"+data[position]+"'");
+                listar();
+            }
+        });
     }
 
     public void update(View v){
@@ -109,15 +101,10 @@ int cont=0;
         listar();
         limpiar();
     }
-    public void DeleteUsuario(int item)
-    {
-        cx.getWritableDatabase().execSQL("DELETE FROM usuario WHERE campo1 =" + item);
-        cx.close();
-    }
+
 
     public void limpiar(){
         edit1.setText("");
         edit2.setText("");
-        edit3.setText("");
     }
 }
