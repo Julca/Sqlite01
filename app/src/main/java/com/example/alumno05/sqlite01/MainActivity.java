@@ -67,7 +67,7 @@ public class MainActivity extends ActionBarActivity {
     public  void insertusuario(View v) {
         if (cx.getWritableDatabase()!=null) {
             cx.getWritableDatabase().execSQL("INSERT INTO usuario (campo1,campo2) values ('" + edit1.getText().toString() + "','" + edit2.getText().toString() + "')");
-            Toast.makeText(getApplicationContext(), "Insertado", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Se a insertado correctamente", Toast.LENGTH_LONG).show();
             listar();
             limpiar();
         }
